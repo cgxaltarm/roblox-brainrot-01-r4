@@ -507,6 +507,24 @@ local function padPart(player, padIndex)
 	return folder:FindFirstChild("Pad" .. tostring(padIndex))
 end
 
+local function clearPadModel(player, padIndex)
+	local pad = padPart(player, padIndex)
+	if not pad then
+		return
+	end
+	for _, child in ipairs(pad:GetChildren()) do
+		if child:IsA("Model") then
+			child:Destroy()
+		end
+	end
+end
+
+local function clearAllPadModels(player)
+	for i = 1, BASE_PADS do
+		clearPadModel(player, i)
+	end
+end
+
 local function placeBrainrot(player, padIndex)
 	local d = data[player]
 	if not d or not d.carrying then
@@ -598,15 +616,8 @@ local function fuseBrainrots(player, padA, padB)
 	end
 	local pool = Catalog.byRarity(nextRarity)
 	local picked = pool[math.random(1, #pool)]
-	local folder = baseFolder(player)
-	if folder then
-		local oldA = folder:FindFirstChild(picked.id)
-		for _, child in ipairs(folder:GetChildren()) do
-			if child:IsA("Model") and (child.Name == a.id or child.Name == b.id) then
-				child:Destroy()
-			end
-		end
-	end
+	clearPadModel(player, padA)
+	clearPadModel(player, padB)
 	d.placed[padA] = { id = picked.id, mutation = Catalog.rollMutation(goldenBoost()) }
 	d.placed[padB] = nil
 	local pad = padPart(player, padA)
@@ -635,14 +646,7 @@ local function doRebirth(player)
 	d.cash = START_CASH
 	d.pile = 0
 	d.rebirth += 1
-	local folder = baseFolder(player)
-	if folder then
-		for _, child in ipairs(folder:GetChildren()) do
-			if child:IsA("Model") then
-				child:Destroy()
-			end
-		end
-	end
+	clearAllPadModels(player)
 	d.placed = {}
 	detachCarry(player)
 	advanceMission(player, "rebirth")
@@ -674,13 +678,7 @@ function stealBrainrot(stealer, victim, padIndex)
 		end
 	end
 	vd.placed[padIndex] = nil
-	if folder then
-		for _, child in ipairs(folder:GetChildren()) do
-			if child:IsA("Model") and child.Name == slot.id then
-				child:Destroy()
-			end
-		end
-	end
+	clearPadModel(victim, padIndex)
 	attachCarry(stealer, slot)
 	sd.stolen += 1
 	advanceMission(stealer, "steal")
@@ -1041,17 +1039,7 @@ end)
 
 Players.PlayerRemoving:Connect(function(player)
 	saveData(player)
-	local d = data[player]
-	if d and d.baseName ~= "" then
-		local base = Workspace:FindFirstChild(d.baseName)
-		if base then
-			for _, child in ipairs(base:GetChildren()) do
-				if child:IsA("Model") then
-					child:Destroy()
-				end
-			end
-		end
-	end
+	clearAllPadModels(player)
 	data[player] = nil
 end)
 

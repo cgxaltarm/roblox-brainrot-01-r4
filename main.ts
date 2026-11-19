@@ -13,7 +13,7 @@
 // letters, digits, . _ and - : anything dotted (.gitkeep, .DS_Store, .git)
 // copied in fails the entry, so both directory copies skip dotted names.
 
-import { copyFileSync, cpSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { copyFileSync, cpSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildDossier } from "./vendor/makefun-roblox.ts";
@@ -22,6 +22,19 @@ const repoRoot = fileURLToPath(new URL(".", import.meta.url));
 const outDir = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
 
 const notDotted = (path: string): boolean => !basename(path).startsWith(".");
+
+// Fail loudly, before copying anything, when a hand-in file is missing or
+// PLAY.json is not the JSON object the gate expects — a half-written
+// /output would otherwise look like a finished entry.
+for (const needed of ["game.rbxl", "PLAY.json"]) {
+	if (!existsSync(join(repoRoot, needed))) {
+		throw new Error(`missing hand-in file: ${needed} (build the place with Rojo first)`);
+	}
+}
+const playLink = JSON.parse(readFileSync(join(repoRoot, "PLAY.json"), "utf8")) as unknown;
+if (typeof playLink !== "object" || playLink === null || !("place_id" in playLink)) {
+	throw new Error("PLAY.json must be an object with place_id, universe_id and url");
+}
 
 mkdirSync(outDir, { recursive: true });
 copyFileSync(join(repoRoot, "game.rbxl"), join(outDir, "game.rbxl"));
