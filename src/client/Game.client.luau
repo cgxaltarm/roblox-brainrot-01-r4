@@ -89,12 +89,13 @@ end
 local moneyLabel = makeLabel(gui, "Money", UDim2.new(1, -220, 0, 10), UDim2.fromOffset(210, 44), "$100", 26, Color3.fromRGB(163, 230, 53))
 -- Pile, bottom-left: the Roblox player list (People) covers the top-right,
 -- so nothing of ours lives there except the money line itself.
-local pileLabel = makeLabel(gui, "Pile", UDim2.new(0, 10, 1, -70), UDim2.fromOffset(210, 26), "Pile: $0", 16, Color3.fromRGB(34, 211, 238))
+local pileLabel = makeLabel(gui, "Pile", UDim2.new(0, 16, 1, -70), UDim2.fromOffset(300, 26), "Pile: $0", 16, Color3.fromRGB(34, 211, 238))
 -- One timer line, top-center. The 3D title sign sits low in the world so it never overlaps this.
 local timerLabel = makeLabel(gui, "Timer", UDim2.new(0.5, -190, 0, 10), UDim2.fromOffset(380, 30), "Tenang", 18)
 local missionLabel = makeLabel(gui, "Mission", UDim2.new(0.5, -260, 0, 44), UDim2.fromOffset(520, 28), "Misi: beli brainrot pertamamu", 16, Color3.fromRGB(255, 210, 60))
 -- Slim MY BASE panel, bottom-left above the pile (clear of the People list).
-local basePanel = makeLabel(gui, "MyBase", UDim2.new(0, 10, 1, -236), UDim2.fromOffset(210, 156), "MY BASE 0/8", 18)
+-- 300 wide so the longest line ("Lock: $1500 (tombol LOCK BASE)") fits whole.
+local basePanel = makeLabel(gui, "MyBase", UDim2.new(0, 16, 1, -236), UDim2.fromOffset(300, 156), "MY BASE 0/8", 18)
 basePanel.TextYAlignment = Enum.TextYAlignment.Top
 
 -- Three buttons, bottom-right.
@@ -447,6 +448,10 @@ StateUpdate.OnClientEvent:Connect(function(s)
 	for key, value in pairs(s) do
 		state[key] = value
 	end
+	-- pairs() skips nil values, so a cleared carry never arrives as a key:
+	-- without this line state.carrying stays set forever and the toast
+	-- (and the pad KLIK hints) never hide after placing.
+	state.carrying = s.carrying
 	moneyLabel.Text = money(state.cash)
 	pileLabel.Text = "Pile: " .. money(state.pile) .. "  |  +" .. money(state.income) .. "/dtk"
 	if state.eventLeft > 0 then
