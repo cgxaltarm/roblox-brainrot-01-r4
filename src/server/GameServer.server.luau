@@ -223,7 +223,7 @@ local function buildBrainrotModel(char, mutation, priceText)
 	model.PrimaryPart = body
 	local gui = Instance.new("BillboardGui")
 	gui.Name = "Card"
-	gui.Size = UDim2.fromOffset(140, 56)
+	gui.Size = UDim2.fromOffset(104, 48)
 	gui.StudsOffsetWorldSpace = Vector3.new(0, 3.4, 0)
 	gui.AlwaysOnTop = true
 	gui.Parent = body
@@ -466,7 +466,7 @@ function buyBrainrot(player, slotIndex)
 		local belt = Workspace:FindFirstChild("Conveyor")
 		if belt then
 			local pad = belt:FindFirstChild("Slot" .. tostring(slotIndex))
-			if pad and (root.Position - pad.Position).Magnitude > 30 then
+			if pad and (root.Position - pad.Position).Magnitude > 60 then
 				return
 			end
 		end

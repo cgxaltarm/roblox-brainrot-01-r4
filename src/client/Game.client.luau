@@ -87,12 +87,14 @@ end
 
 -- Money, top-right (top-left corner stays clear for Roblox menus).
 local moneyLabel = makeLabel(gui, "Money", UDim2.new(1, -220, 0, 10), UDim2.fromOffset(210, 44), "$100", 26, Color3.fromRGB(163, 230, 53))
-local pileLabel = makeLabel(gui, "Pile", UDim2.new(1, -220, 0, 58), UDim2.fromOffset(210, 26), "Pile: $0", 16, Color3.fromRGB(34, 211, 238))
+-- Pile, bottom-left: the Roblox player list (People) covers the top-right,
+-- so nothing of ours lives there except the money line itself.
+local pileLabel = makeLabel(gui, "Pile", UDim2.new(0, 10, 1, -70), UDim2.fromOffset(210, 26), "Pile: $0", 16, Color3.fromRGB(34, 211, 238))
 -- One timer line, top-center. The 3D title sign sits low in the world so it never overlaps this.
 local timerLabel = makeLabel(gui, "Timer", UDim2.new(0.5, -190, 0, 10), UDim2.fromOffset(380, 30), "Tenang", 18)
 local missionLabel = makeLabel(gui, "Mission", UDim2.new(0.5, -260, 0, 44), UDim2.fromOffset(520, 28), "Misi: beli brainrot pertamamu", 16, Color3.fromRGB(255, 210, 60))
--- Slim MY BASE panel, right edge under the money.
-local basePanel = makeLabel(gui, "MyBase", UDim2.new(1, -220, 0, 92), UDim2.fromOffset(210, 120), "MY BASE 0/8", 18)
+-- Slim MY BASE panel, bottom-left above the pile (clear of the People list).
+local basePanel = makeLabel(gui, "MyBase", UDim2.new(0, 10, 1, -236), UDim2.fromOffset(210, 156), "MY BASE 0/8", 18)
 basePanel.TextYAlignment = Enum.TextYAlignment.Top
 
 -- Three buttons, bottom-right.
